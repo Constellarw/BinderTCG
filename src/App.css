@@ -1,38 +1,242 @@
+/* Estilos para centralizar o conteúdo principal e dar algum espaçamento */
 .App {
+  text-align: center; /* Ou remova se não quiser tudo centralizado por padrão */
+}
+
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: left; /* Para que o conteúdo dentro do container não seja centralizado */
+}
+
+.section {
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  margin-top: 0;
+  color: #e3350d; /* Cor do tema Pokémon */
+}
+
+/* Estilos dos botões de navegação e header (copiados/adaptados do HTML original) */
+header {
+  background-color: #e3350d;
+  color: white;
+  padding: 1em;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  background-color: #333;
+  padding: 0.5em;
+}
+
+nav button {
+  background-color: #555;
+  color: white;
+  border: none;
+  padding: 0.8em 1.5em;
+  margin: 0 0.5em;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+nav button:hover {
+  background-color: #777;
+}
+
+/* Estilos do SearchBar (adaptados) */
+#search-bar {
+  margin-bottom: 20px;
+  display: flex; /* Para alinhar input e botão */
+  justify-content: center; /* Centralizar a barra de busca */
+  gap: 10px; /* Espaço entre input e botão */
+}
+
+#search-bar input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 250px; /* Largura mínima */
+  flex-grow: 1; /* Permitir que cresça */
+  max-width: 400px; /* Largura máxima */
+}
+
+#search-bar button {
+  padding: 10px 15px;
+  background-color: #3b4cca; /* Azul Pokémon */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#search-bar button:hover {
+  background-color: #2a378f;
+}
+
+/* Estilos da grade de cards e preview (adaptados) */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.card-preview {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: #f9f9f9;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.card-preview img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.card-preview p {
+  padding: 5px;
+  font-size: 0.9em;
+  color: #333;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.card-preview:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+/* Estilos do Modal (adaptados) */
+.modal {
+  /* display: none;  Controlado pelo React agora */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+  /* justify-content e align-items são definidos inline no JSX para 'flex' */
+}
+
+.modal-content {
+  position: relative;
+  margin: auto; /* Centraliza se o pai for flex */
+  padding: 20px;
+  width: fit-content;
+}
+
+#inspected-card-container {
+  width: 240px; 
+  height: 330px;
+  perspective: 1000px;
+  margin: 0 auto;
+}
+
+.close-button {
+  position: absolute;
+  top: -5px; /* Ajustado para ficar um pouco mais próximo da carta */
+  right: -5px; /* Ajustado */
   color: white;
+  background-color: #e3350d;
+  font-size: 24px; /* Ligeiramente menor */
+  font-weight: bold;
+  width: 35px; /* Ligeiramente menor */
+  height: 35px; /* Ligeiramente menor */
+  border-radius: 50%;
+  border: 2px solid white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1001;
+  line-height: 1; /* Garante que o X fique centralizado */
 }
 
-.App-link {
-  color: #61dafb;
+.close-button:hover,
+.close-button:focus {
+  background-color: #c02d0b;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#add-to-gallery-button {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+#add-to-gallery-button:hover {
+  background-color: #45a049;
+}
+
+#gallery-actions button {
+  padding: 10px 15px;
+  background-color: #ffcb05; /* Amarelo Pokémon */
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+}
+#gallery-actions button:hover {
+  background-color: #e6b804;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #333;
+  color: #aaa;
+  font-size: 0.9em;
+  margin-top: 30px; /* Espaço antes do rodapé */
+}
+
+#loading-message {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #555;
+}
+
+#pagination-controls button {
+    margin: 0 5px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#pagination-controls button:hover {
+    background-color: #0056b3;
+}
+#pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+#pagination-controls span {
+    margin: 0 10px;
+    font-weight: bold;
 }
