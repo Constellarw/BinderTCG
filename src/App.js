@@ -6,6 +6,7 @@ import CardList from './CardList';
 import Gallery from './Gallery';
 import CardInspectorModal from './CardInspectorModal';
 import Footer from './Footer';
+import DarkModeToggle from './DarkModeToggle';
 import './App.css'; // Para estilos do layout principal do App
 
 const POKEMON_API_KEY = "ded63161-025b-4626-b221-a5bb93fa72ed";
@@ -21,6 +22,7 @@ function App() {
     const [activeView, setActiveView] = useState('search'); // 'search' or 'gallery'
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [darkMode, setDarkMode] = useState(false);
 
     // Carregar galeria do localStorage ao iniciar
     useEffect(() => {
@@ -34,6 +36,14 @@ function App() {
     useEffect(() => {
         localStorage.setItem('pokemonGallery', JSON.stringify(galleryItems));
     }, [galleryItems]);
+
+    useEffect(() => {
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }, [darkMode]);
 
     const handleSearch = async (newSearchTerm, page = 1) => {
         if (!newSearchTerm && !searchTerm && page === 1) {
@@ -130,7 +140,8 @@ function App() {
 
 
     return (
-        <div className="App">
+        <div className={`App${darkMode ? ' dark-mode' : ''}`}>
+            <DarkModeToggle isDark={darkMode} onToggle={() => setDarkMode(dm => !dm)} />
             <Header />
             <Navigation setActiveView={setActiveView} />
             
