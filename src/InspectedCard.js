@@ -70,6 +70,7 @@ function InspectedCard({ cardData }) {
   const [interacting, setInteracting] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const cardRef = useRef(null);
+  const touchMoveFrame = useRef(null);
 
   useEffect(() => {
     setIsMobileDevice(isMobile());
@@ -152,19 +153,26 @@ function InspectedCard({ cardData }) {
     const rect = card.getBoundingClientRect();
     const x = ((touch.clientX - rect.left) / rect.width) * 100;
     const y = ((touch.clientY - rect.top) / rect.height) * 100;
-
     const centerX = x - 50;
     const centerY = y - 50;
-
-    // Menos sensível no mobile
     const rotateX = -centerY * 0.5;
     const rotateY = centerX * 0.5;
 
-    card.style.setProperty('--rotate-x', `${rotateX}deg`);
-    card.style.setProperty('--rotate-y', `${rotateY}deg`);
-    card.style.setProperty('--card-scale', 1.08);
-    card.style.setProperty('--card-opacity', 1);
+    // Use requestAnimationFrame para suavizar
+    if (touchMoveFrame.current) cancelAnimationFrame(touchMoveFrame.current);
+    touchMoveFrame.current = requestAnimationFrame(() => {
+      card.style.setProperty('--rotate-x', `${rotateX}deg`);
+      card.style.setProperty('--rotate-y', `${rotateY}deg`);
+      card.style.setProperty('--card-scale', 1.08);
+      card.style.setProperty('--card-opacity', 1);
+    });
   };
+
+  useEffect(() => {
+    return () => {
+      if (touchMoveFrame.current) cancelAnimationFrame(touchMoveFrame.current);
+    };
+  }, []);
 
   const handlePointerOut = () => {
     setInteracting(false);

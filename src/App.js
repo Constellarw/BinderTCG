@@ -21,7 +21,7 @@ function Home() {
       <p>Gerencie, busque e compartilhe suas cartas Pokémon favoritas.</p>
       <div style={{ marginTop: 32 }}>
         <Link to="/buscar-cartas" className="menu-link">Buscar Cartas</Link>
-        <span style={{ margin: '0 16px' }}></span>
+        
         <Link to="/minha-galeria" className="menu-link">Minha Galeria</Link>
       </div>
     </section>
