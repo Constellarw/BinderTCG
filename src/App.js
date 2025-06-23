@@ -225,8 +225,11 @@ function App() {
               isSharedGallery={activeView === 'gallery' && window.location.pathname === "/galeria/compartilhada"}
             />
           )}
-          {/* Footer só aparece se NÃO estiver na busca com pesquisa feita */}
-          {!(window.location.pathname === "/buscar-cartas" && searchTerm && searchResults.length > 0) && <Footer />}
+          {/* Footer só aparece se NÃO estiver na busca com pesquisa feita e NÃO na pasta compartilhada */}
+          {!(
+            (window.location.pathname === "/buscar-cartas" && searchTerm && searchResults.length > 0) ||
+            window.location.pathname === "/galeria/compartilhada"
+          ) && <Footer />}
         </div>
       </Router>
     );
