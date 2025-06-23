@@ -39,7 +39,7 @@ nav {
   padding: 0.5em;
 }
 
-nav button {
+.menu-link{
   background-color: #555;
   color: white;
   border: none;
@@ -50,7 +50,7 @@ nav button {
   font-size: 1em;
 }
 
-nav button:hover {
+.menu-link:hover {
   background-color: #777;
 }
 

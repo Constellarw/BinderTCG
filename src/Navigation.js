@@ -1,10 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-function Navigation({ setActiveView }) {
+function Navigation() {
     return (
         <nav>
-            <button onClick={() => setActiveView('search')}>Buscar Cartas</button>
-            <button onClick={() => setActiveView('gallery')}>Minha Galeria</button>
+            <Link to="/buscar-cartas" className="menu-link">Buscar Cartas</Link>
+            <Link to="/minha-galeria" className="menu-link">Minha Galeria</Link>
         </nav>
     );
 }

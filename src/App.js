@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Navigation from './Navigation';
 import SearchBar from './SearchBar';
@@ -7,10 +8,25 @@ import Gallery from './Gallery';
 import CardInspectorModal from './CardInspectorModal';
 import Footer from './Footer';
 import DarkModeToggle from './DarkModeToggle';
-import './App.css'; // Para estilos do layout principal do App
+import './App.css';
 
 const POKEMON_API_KEY = "ded63161-025b-4626-b221-a5bb93fa72ed";
 const API_BASE_URL = "https://api.pokemontcg.io/v2/cards";
+
+// Novo componente Home
+function Home() {
+  return (
+    <section className="section" style={{ textAlign: 'center' }}>
+      <h1>Bem-vindo à sua Coleção Pokémon!</h1>
+      <p>Gerencie, busque e compartilhe suas cartas Pokémon favoritas.</p>
+      <div style={{ marginTop: 32 }}>
+        <Link to="/buscar-cartas" className="menu-link">Buscar Cartas</Link>
+        <span style={{ margin: '0 16px' }}></span>
+        <Link to="/minha-galeria" className="menu-link">Minha Galeria</Link>
+      </div>
+    </section>
+  );
+}
 
 function App() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -19,12 +35,12 @@ function App() {
     const [selectedCard, setSelectedCard] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [activeView, setActiveView] = useState('search'); // 'search' or 'gallery'
+    const [activeView, setActiveView] = useState('search'); 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [darkMode, setDarkMode] = useState(false);
 
-    // Carregar galeria do localStorage ao iniciar
+ 
     useEffect(() => {
         const storedGallery = localStorage.getItem('pokemonGallery');
         if (storedGallery) {
@@ -32,7 +48,6 @@ function App() {
         }
     }, []);
 
-    // Salvar galeria no localStorage quando mudar
     useEffect(() => {
         localStorage.setItem('pokemonGallery', JSON.stringify(galleryItems));
     }, [galleryItems]);
@@ -113,18 +128,18 @@ function App() {
             const fetchGalleryCards = async () => {
                 setIsLoading(true);
                 try {
-                    // A API do Pokemon TCG não suporta buscar múltiplos IDs de uma vez de forma simples com 'OR' na query de ID.
-                    // Uma alternativa é buscar por nome/set ou fazer chamadas individuais (menos eficiente)
-                    // Para simplificar, vamos instruir o usuário ou apenas mostrar a primeira carta.
-                    // Ou, se tivermos todos os dados já no searchResults ou em um "cache", podemos usar isso.
-                    // A forma mais robusta seria buscar cada ID individualmente se não estiverem em cache.
-                    // Por ora, vamos apenas mostrar um alerta e mudar para a visualização da galeria.
-                    console.log("IDs para carregar na galeria a partir da URL:", ids);
-                    alert("Funcionalidade de carregar galeria por URL: implemente a busca por IDs.");
-                    // Exemplo de busca por um ID (precisaria de um loop e Promise.all para vários)
-                    // const response = await fetch(`${API_BASE_URL}/${ids[0]}`, { headers: { 'X-Api-Key': POKEMON_API_KEY }});
-                    // const data = await response.json();
-                    // setGalleryItems([data.data]); // Exemplo com uma carta
+                    // Busca cada carta individualmente
+                    const cards = await Promise.all(
+                        ids.map(async (id) => {
+                            const response = await fetch(`${API_BASE_URL}/${id}`, {
+                                headers: { 'X-Api-Key': POKEMON_API_KEY }
+                            });
+                            if (!response.ok) return null;
+                            const data = await response.json();
+                            return data.data || null;
+                        })
+                    );
+                    setGalleryItems(cards.filter(Boolean));
                     setActiveView('gallery');
                 } catch (error) {
                     console.error("Erro ao carregar galeria da URL:", error);
@@ -133,53 +148,54 @@ function App() {
                 }
             };
             fetchGalleryCards();
-             // Limpar a query da URL para não recarregar sempre
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     }, []);
 
 
     return (
+      <Router>
         <div className={`App${darkMode ? ' dark-mode' : ''}`}>
-            <DarkModeToggle isDark={darkMode} onToggle={() => setDarkMode(dm => !dm)} />
-            <Header />
-            <Navigation setActiveView={setActiveView} />
-            
-            <div className="container"> {/* Adicione estilos para .container em App.css */}
-                {activeView === 'search' && (
-                    <section id="search-section" className="section">
-                        <SearchBar onSearch={handleSearch} initialTerm={searchTerm} />
-                        {isLoading && <div id="loading-message">Carregando...</div>}
-                        <CardList
-                            cards={searchResults}
-                            onInspectCard={handleInspectCard}
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={(page) => handleSearch(searchTerm, page)}
-                        />
-                    </section>
-                )}
-
-                {activeView === 'gallery' && (
-                    <Gallery
-                        items={galleryItems}
-                        onInspectCard={handleInspectCard}
-                        onRemoveCard={handleRemoveFromGallery}
-                        onShare={handleShareGallery}
-                    />
-                )}
-            </div>
-
-            {isModalOpen && selectedCard && (
-                <CardInspectorModal
-                    card={selectedCard}
-                    onClose={handleCloseModal}
-                    onAddToGallery={handleAddToGallery}
-                    isInGallery={galleryItems.some(item => item.id === selectedCard.id)}
+          <DarkModeToggle isDark={darkMode} onToggle={() => setDarkMode(dm => !dm)} />
+          <Header />
+          <Navigation />
+          <div className="container">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/buscar-cartas" element={
+                <section id="search-section" className="section">
+                  <SearchBar onSearch={handleSearch} initialTerm={searchTerm} />
+                  {isLoading && <div id="loading-message">Carregando...</div>}
+                  <CardList
+                    cards={searchResults}
+                    onInspectCard={handleInspectCard}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => handleSearch(searchTerm, page)}
+                  />
+                </section>
+              } />
+              <Route path="/minha-galeria" element={
+                <Gallery
+                  items={galleryItems}
+                  onInspectCard={handleInspectCard}
+                  onRemoveCard={handleRemoveFromGallery}
+                  onShare={handleShareGallery}
                 />
-            )}
-            <Footer />
+              } />
+            </Routes>
+          </div>
+          {isModalOpen && selectedCard && (
+            <CardInspectorModal
+              card={selectedCard}
+              onClose={handleCloseModal}
+              onAddToGallery={handleAddToGallery}
+              isInGallery={galleryItems.some(item => item.id === selectedCard.id)}
+            />
+          )}
+          <Footer />
         </div>
+      </Router>
     );
 }
 
