@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // Função auxiliar para gerar classes baseadas nos dados da carta
 // Você precisará expandir isso MUITO para cobrir todas as variações do CSS original
@@ -61,51 +61,32 @@ const getCardClasses = (card) => {
 };
 
 function InspectedCard({ cardData }) {
-    const cardClasses = getCardClasses(cardData);
-    const imageUrl = cardData.images && cardData.images.large ? cardData.images.large : 'placeholder_large.png';
+  const [flipped, setFlipped] = useState(false);
+  const cardClasses = getCardClasses(cardData);
+  const imageUrl = cardData.images && cardData.images.large ? cardData.images.large : 'placeholder_large.png';
 
-    // A estrutura interna do card__rotator precisa ser preenchida
-    // com os elementos visuais da carta (nome, ataques, HP, etc.)
-    // que você pegaria dos dados de `cardData`.
-    // O projeto original CSS pode ter placeholders para esses elementos
-    // ou estilizar diretamente a imagem de fundo.
-
-    return (
-        // A classe 'pokemon-card' é um exemplo, use a classe principal do CSS original
-        // A estrutura card > card__translater > card__rotator é do projeto original
-        <article className={cardClasses} data-name={cardData.name} id={cardData.id}>
-            <div className="card__translater">
-                <div className="card__rotator">
-                    {/* Camada da Imagem Principal */}
-                    <div className="card__front">
-                        <img src={imageUrl} alt={cardData.name} className="card__image" />
-                        {/* Outros elementos do card como nome, HP, ataques podem ser sobrepostos aqui se necessário */}
-                        {/* Exemplo: <p className="card__name">{cardData.name}</p> */}
-                    </div>
-
-                    {/* Camadas de Efeito Holográfico - Adicione conforme o CSS original */}
-                    {/* Essas camadas são geralmente divs vazias que o CSS usa para criar os brilhos e padrões */}
-                    {/* Verifique os arquivos .css (ex: regular-holo.css, cosmos-holo.css) para ver quais camadas são necessárias */}
-                    {/* Exemplo para um holo genérico, pode variar: */}
-                    {cardClasses.includes('holo') && !cardClasses.includes('reverse-holo') && (
-                        <>
-                            <div className="card__holo_layer--1"></div>
-                            <div className="card__holo_layer--2"></div>
-                            {/* Adicione mais se necessário */}
-                        </>
-                    )}
-                    {/* Para reverse holo, as camadas e seletores podem ser diferentes */}
-                     {cardClasses.includes('reverse-holo') && (
-                        <>
-                            {/* Camadas específicas para reverse-holo */}
-                        </>
-                    )}
-                    {/* Adicione condicionais para outras camadas de efeitos (Cosmos, Amazing Rare, etc.) */}
-
-                </div>
-            </div>
-        </article>
-    );
+  return (
+    <article
+      className={cardClasses}
+      data-name={cardData.name}
+      id={cardData.id}
+      data-rarity={cardData.rarity ? cardData.rarity.toLowerCase() : undefined}
+      onClick={() => setFlipped(f => !f)} // flip ao clicar
+    >
+      <div className="card__translater">
+        <div className="card__rotator" style={{ transform: flipped ? 'rotateY(180deg)' : undefined }}>
+          <div className="card__front">
+            <img src={imageUrl} alt={cardData.name} className="card__image" />
+          </div>
+          <div className="card__shine"></div>
+          <div className="card__glare"></div>
+          <div className="card__back">
+            <img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Verso da carta" className="card__image" />
+          </div>
+        </div>
+      </div>
+    </article>
+  );
 }
 
 export default InspectedCard;
