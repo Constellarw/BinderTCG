@@ -228,7 +228,7 @@ function App() {
           {/* Footer só aparece se NÃO estiver na busca com pesquisa feita e NÃO na pasta compartilhada */}
           {!(
             (window.location.pathname === "/buscar-cartas" && searchTerm && searchResults.length > 0) ||
-            window.location.pathname === "/galeria/compartilhada"
+            window.location.pathname === "/galeria/compartilhada" || window.location.pathname === "/minha-galeria"
           ) && <Footer />}
         </div>
       </Router>
