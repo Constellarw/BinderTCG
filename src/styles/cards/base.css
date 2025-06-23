@@ -137,9 +137,9 @@
 }
 
 .card__rotator {
-  -webkit-transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
+  -webkit-transform: rotateY(var(--flip-rotate, 0deg)) rotateY(var(--rotate-x, 0deg)) rotateX(var(--rotate-y, 0deg));
   -webkit-transform-style: preserve-3d;
-  transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
+  transform: rotateY(var(--flip-rotate, 0deg)) rotateY(var(--rotate-x, 0deg)) rotateX(var(--rotate-y, 0deg));
   
   /* performance */
   pointer-events: auto;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 // Função auxiliar para gerar classes baseadas nos dados da carta
 // Você precisará expandir isso MUITO para cobrir todas as variações do CSS original
@@ -61,27 +61,119 @@ const getCardClasses = (card) => {
 };
 
 function InspectedCard({ cardData }) {
-  const [flipped, setFlipped] = useState(false);
-  const cardClasses = getCardClasses(cardData);
-  const imageUrl = cardData.images && cardData.images.large ? cardData.images.large : 'placeholder_large.png';
+  const [loading, setLoading] = useState(true);
+  const [flipped, setFlipped] = useState(true);
+  const [interacting, setInteracting] = useState(false);
+  const cardRef = useRef(null);
+
+  const cardClasses =
+    getCardClasses(cardData) +
+    (loading ? ' loading' : '') +
+    (interacting ? ' interacting' : '');
+
+  const imageUrl =
+    cardData.images && cardData.images.large
+      ? cardData.images.large
+      : 'placeholder_large.png';
+
+  // Flip automático ao carregar a imagem
+  const handleImageLoad = () => {
+    setLoading(false);
+    setTimeout(() => setFlipped(false), 150);
+  };
+
+  // Flip manual ao clicar
+  const handleCardClick = () => {
+    setFlipped((f) => !f);
+  };
+
+  const getFlipRotate = () => (flipped ? '180deg' : '0deg');
+
+  // Interação do mouse
+  const handlePointerMove = (e) => {
+    setInteracting(true);
+    const card = cardRef.current;
+    if (!card) return;
+    if (flipped) {
+      // Se estiver flipada para trás, não inclina
+      card.style.setProperty('--rotate-x', `0deg`);
+      card.style.setProperty('--rotate-y', `0deg`);
+      return;
+    }
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    const centerX = x - 50;
+    const centerY = y - 50;
+    const pointerFromCenter = Math.sqrt(centerX * centerX + centerY * centerY) / 50;
+    const pointerFromTop = y / 100;
+    const pointerFromLeft = x / 100;
+
+    // Mais sensível:
+    const rotateX = -centerY;
+    const rotateY = centerX;
+
+    card.style.setProperty('--pointer-x', `${x}%`);
+    card.style.setProperty('--pointer-y', `${y}%`);
+    card.style.setProperty('--pointer-from-center', pointerFromCenter);
+    card.style.setProperty('--pointer-from-top', pointerFromTop);
+    card.style.setProperty('--pointer-from-left', pointerFromLeft);
+    card.style.setProperty('--rotate-x', `${rotateX}deg`);
+    card.style.setProperty('--rotate-y', `${rotateY}deg`);
+    card.style.setProperty('--background-x', `${x}%`);
+    card.style.setProperty('--background-y', `${y}%`);
+    card.style.setProperty('--card-scale', 1.12);
+    card.style.setProperty('--card-opacity', 1);
+  };
+
+  const handlePointerOut = () => {
+    setInteracting(false);
+    const card = cardRef.current;
+    if (!card) return;
+    card.style.setProperty('--pointer-x', `50%`);
+    card.style.setProperty('--pointer-y', `50%`);
+    card.style.setProperty('--pointer-from-center', 0);
+    card.style.setProperty('--pointer-from-top', 0.5);
+    card.style.setProperty('--pointer-from-left', 0.5);
+    card.style.setProperty('--rotate-x', `0deg`);
+    card.style.setProperty('--rotate-y', `0deg`);
+    card.style.setProperty('--background-x', `50%`);
+    card.style.setProperty('--background-y', `50%`);
+    card.style.setProperty('--card-scale', 1);
+    card.style.setProperty('--card-opacity', 0);
+  };
 
   return (
-    <article
-      className={cardClasses}
-      data-name={cardData.name}
-      id={cardData.id}
-      data-rarity={cardData.rarity ? cardData.rarity.toLowerCase() : undefined}
-      onClick={() => setFlipped(f => !f)} // flip ao clicar
-    >
+    <article className={cardClasses} onClick={handleCardClick}>
       <div className="card__translater">
-        <div className="card__rotator" style={{ transform: flipped ? 'rotateY(180deg)' : undefined }}>
+        <div
+          className="card__rotator"
+          ref={cardRef}
+          style={{
+            '--flip-rotate': getFlipRotate(),
+          }}
+          onPointerMove={handlePointerMove}
+          onPointerOut={handlePointerOut}
+        >
           <div className="card__front">
-            <img src={imageUrl} alt={cardData.name} className="card__image" />
+            <img
+              src={imageUrl}
+              alt={cardData.name}
+              className="card__image"
+              onLoad={handleImageLoad}
+              draggable={false}
+            />
           </div>
           <div className="card__shine"></div>
           <div className="card__glare"></div>
           <div className="card__back">
-            <img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Verso da carta" className="card__image" />
+            <img
+              src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg"
+              alt="Verso da carta"
+              className="card__image"
+              draggable={false}
+            />
           </div>
         </div>
       </div>

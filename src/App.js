@@ -104,10 +104,11 @@ function App() {
         }
     };
 
-    const handleInspectCard = (card, adding = false) => {
-        setSelectedCard(card);
-        setIsModalOpen(true);
-        setIsAddingToGallery(adding);
+    const handleInspectCard = (card, adding = false, shared = false) => {
+      setSelectedCard(card);
+      setIsModalOpen(true);
+      setIsAddingToGallery(adding);
+      if (shared) setActiveView('gallery');
     };
 
     const handleCloseModal = () => {
@@ -213,7 +214,7 @@ function App() {
   element={
     <PastaCompartilhada
       items={galleryItems}
-      onInspectCard={handleInspectCard}
+      onInspectCard={(card) => handleInspectCard(card, false, true)}
     />
   }
 />
@@ -224,8 +225,11 @@ function App() {
               card={selectedCard}
               onClose={handleCloseModal}
               onAddToGallery={handleAddToGallery}
-              isInGallery={galleryItems.some(item => item.card.id === selectedCard.id)}
+              isInGallery={galleryItems.some(item =>
+      (item.card ? item.card.id : item.id) === selectedCard.id
+    )}
               isAddingToGallery={isAddingToGallery}
+              isSharedGallery={activeView === 'gallery' && window.location.pathname === "/galeria/compartilhada"}
             />
           )}
           <Footer />
