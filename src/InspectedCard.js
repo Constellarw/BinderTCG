@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 // Função auxiliar para gerar classes baseadas nos dados da carta
 // Você precisará expandir isso MUITO para cobrir todas as variações do CSS original
@@ -60,11 +60,20 @@ const getCardClasses = (card) => {
     return classes.join(' ');
 };
 
+function isMobile() {
+  return /Mobi|Android/i.test(navigator.userAgent);
+}
+
 function InspectedCard({ cardData }) {
   const [loading, setLoading] = useState(true);
   const [flipped, setFlipped] = useState(true);
   const [interacting, setInteracting] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
   const cardRef = useRef(null);
+
+  useEffect(() => {
+    setIsMobileDevice(isMobile());
+  }, []);
 
   const cardClasses =
     getCardClasses(cardData) +
@@ -89,8 +98,9 @@ function InspectedCard({ cardData }) {
 
   const getFlipRotate = () => (flipped ? '180deg' : '0deg');
 
-  // Interação do mouse
+  // Interação do mouse (desktop)
   const handlePointerMove = (e) => {
+    if (isMobileDevice) return; // Não faz tilt no mobile
     setInteracting(true);
     const card = cardRef.current;
     if (!card) return;
@@ -127,6 +137,35 @@ function InspectedCard({ cardData }) {
     card.style.setProperty('--card-opacity', 1);
   };
 
+  // Interação de toque (mobile)
+  const handleTouchMove = (e) => {
+    if (!isMobileDevice) return;
+    setInteracting(true);
+    const card = cardRef.current;
+    if (!card) return;
+    if (flipped) {
+      card.style.setProperty('--rotate-x', `0deg`);
+      card.style.setProperty('--rotate-y', `0deg`);
+      return;
+    }
+    const touch = e.touches[0];
+    const rect = card.getBoundingClientRect();
+    const x = ((touch.clientX - rect.left) / rect.width) * 100;
+    const y = ((touch.clientY - rect.top) / rect.height) * 100;
+
+    const centerX = x - 50;
+    const centerY = y - 50;
+
+    // Menos sensível no mobile
+    const rotateX = -centerY * 0.5;
+    const rotateY = centerX * 0.5;
+
+    card.style.setProperty('--rotate-x', `${rotateX}deg`);
+    card.style.setProperty('--rotate-y', `${rotateY}deg`);
+    card.style.setProperty('--card-scale', 1.08);
+    card.style.setProperty('--card-opacity', 1);
+  };
+
   const handlePointerOut = () => {
     setInteracting(false);
     const card = cardRef.current;
@@ -155,6 +194,8 @@ function InspectedCard({ cardData }) {
           }}
           onPointerMove={handlePointerMove}
           onPointerOut={handlePointerOut}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handlePointerOut}
         >
           <div className="card__front">
             <img
