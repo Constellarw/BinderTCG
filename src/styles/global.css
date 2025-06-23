@@ -43,7 +43,6 @@ header {
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 30px;
-  max-width: 900px;
   margin: auto;
 }
 

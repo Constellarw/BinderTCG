@@ -22,7 +22,7 @@ function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery, isAddi
                                 min={1}
                                 value={quantity}
                                 onChange={e => setQuantity(Number(e.target.value))}
-                                style={{ width: 60, marginRight: 8 }}
+                                style={{ width: 60, marginRight: 8, position: 'relative', top:'50px',height: 30, right: '116px' }}
                             />
                         )}
                         {/* Mensagem "Esta carta já está na sua galeria!" */}

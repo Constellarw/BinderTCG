@@ -7,7 +7,6 @@ import CardList from './CardList';
 import Gallery from './Gallery';
 import CardInspectorModal from './CardInspectorModal';
 import Footer from './Footer';
-import DarkModeToggle from './DarkModeToggle';
 import './App.css';
 
 const POKEMON_API_KEY = "ded63161-025b-4626-b221-a5bb93fa72ed";
@@ -19,11 +18,6 @@ function Home() {
     <section className="section" style={{ textAlign: 'center' }}>
       <h1>Bem-vindo à sua Coleção Pokémon!</h1>
       <p>Gerencie, busque e compartilhe suas cartas Pokémon favoritas.</p>
-      <div style={{ marginTop: 32 }}>
-        <Link to="/buscar-cartas" className="menu-link">Buscar Cartas</Link>
-        
-        <Link to="/minha-galeria" className="menu-link">Minha Galeria</Link>
-      </div>
     </section>
   );
 }
@@ -182,7 +176,6 @@ function App() {
     return (
       <Router>
         <div className={`App${darkMode ? ' dark-mode' : ''}`}>
-          <DarkModeToggle isDark={darkMode} onToggle={() => setDarkMode(dm => !dm)} />
           <Header />
           <Navigation />
           <div className="container">
@@ -226,13 +219,14 @@ function App() {
               onClose={handleCloseModal}
               onAddToGallery={handleAddToGallery}
               isInGallery={galleryItems.some(item =>
-      (item.card ? item.card.id : item.id) === selectedCard.id
-    )}
+                (item.card ? item.card.id : item.id) === selectedCard.id
+              )}
               isAddingToGallery={isAddingToGallery}
               isSharedGallery={activeView === 'gallery' && window.location.pathname === "/galeria/compartilhada"}
             />
           )}
-          <Footer />
+          {/* Footer só aparece se NÃO estiver na busca com pesquisa feita */}
+          {!(window.location.pathname === "/buscar-cartas" && searchTerm && searchResults.length > 0) && <Footer />}
         </div>
       </Router>
     );
