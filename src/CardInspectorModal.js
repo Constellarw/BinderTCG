@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import InspectedCard from './InspectedCard'; // Este componente cuidará da renderização com classes de efeito
 
-function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery }) {
+function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery, isAddingToGallery }) {
+    const [quantity, setQuantity] = useState(1);
+
     if (!card) return null;
 
     return (
@@ -11,8 +13,17 @@ function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery }) {
                 <div id="inspected-card-container">
                     <InspectedCard cardData={card} />
                 </div>
+                {isAddingToGallery && (
+                    <input
+                        type="number"
+                        min={1}
+                        value={quantity}
+                        onChange={e => setQuantity(Number(e.target.value))}
+                        style={{ width: 60, marginRight: 8 }}
+                    />
+                )}
                 {!isInGallery && (
-                    <button id="add-to-gallery-button" onClick={() => onAddToGallery(card)}>
+                    <button id="add-to-gallery-button" onClick={() => onAddToGallery(card, quantity)}>
                         Salvar na Galeria
                     </button>
                 )}

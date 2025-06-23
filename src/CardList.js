@@ -10,7 +10,7 @@ function CardList({ cards, onInspectCard, currentPage, totalPages, onPageChange 
         <>
             <div id="card-list" className="card-grid">
                 {cards.map(card => (
-                    <CardPreview key={card.id} card={card} onInspect={() => onInspectCard(card)} />
+                    <CardPreview key={card.id} card={card} onInspect={() => onInspectCard(card, true)} />
                 ))}
             </div>
             <div id="pagination-controls" style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -25,4 +25,4 @@ function CardList({ cards, onInspectCard, currentPage, totalPages, onPageChange 
         </>
     );
 }
-export default CardList;
+export default CardList;    

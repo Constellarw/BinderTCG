@@ -28,10 +28,23 @@ function Home() {
   );
 }
 
+function PastaCompartilhada({ items, onInspectCard }) {
+  return (
+    <section className="section">
+      <h1>Pasta compartilhada</h1>
+      {items.length === 0 ? (
+        <p>Nenhuma carta compartilhada.</p>
+      ) : (
+        <CardList cards={items.map(i => i.card || i)} onInspectCard={onInspectCard} />
+      )}
+    </section>
+  );
+}
+
 function App() {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    const [galleryItems, setGalleryItems] = useState([]);
+    const [galleryItems, setGalleryItems] = useState([]); // [{ card, quantity }]
     const [selectedCard, setSelectedCard] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +52,7 @@ function App() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [darkMode, setDarkMode] = useState(false);
+    const [isAddingToGallery, setIsAddingToGallery] = useState(false);
 
  
     useEffect(() => {
@@ -90,9 +104,10 @@ function App() {
         }
     };
 
-    const handleInspectCard = (card) => {
+    const handleInspectCard = (card, adding = false) => {
         setSelectedCard(card);
         setIsModalOpen(true);
+        setIsAddingToGallery(adding);
     };
 
     const handleCloseModal = () => {
@@ -100,20 +115,30 @@ function App() {
         setSelectedCard(null);
     };
 
-    const handleAddToGallery = (card) => {
-        if (!galleryItems.find(item => item.id === card.id)) {
-            setGalleryItems([...galleryItems, card]);
-        }
+    const handleAddToGallery = (card, quantity = 1) => {
+        setGalleryItems(prev => {
+            const existing = prev.find(item => item.card.id === card.id);
+            if (existing) {
+                // Atualiza a quantidade
+                return prev.map(item =>
+                    item.card.id === card.id
+                        ? { ...item, quantity: item.quantity + quantity }
+                        : item
+                );
+            }
+            // Adiciona nova carta
+            return [...prev, { card, quantity }];
+        });
         handleCloseModal();
     };
 
     const handleRemoveFromGallery = (cardId) => {
-        setGalleryItems(galleryItems.filter(item => item.id !== cardId));
+        setGalleryItems(galleryItems.filter(item => item.card.id !== cardId));
     };
 
     const handleShareGallery = () => {
-        const cardIds = galleryItems.map(card => card.id).join(',');
-        const shareUrl = `${window.location.origin}${window.location.pathname}?gallery=${cardIds}`;
+        const cardIds = galleryItems.map(item => item.card.id).join(',');
+        const shareUrl = `${window.location.origin}/galeria/compartilhada?gallery=${cardIds}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => alert('Link da galeria copiado para a área de transferência!'))
             .catch(err => console.error('Erro ao copiar link: ', err));
@@ -123,12 +148,12 @@ function App() {
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const galleryQuery = urlParams.get('gallery');
-        if (galleryQuery) {
+        // Verifica se está na rota de pasta compartilhada
+        if (window.location.pathname === "/galeria/compartilhada" && galleryQuery) {
             const ids = galleryQuery.split(',');
             const fetchGalleryCards = async () => {
                 setIsLoading(true);
                 try {
-                    // Busca cada carta individualmente
                     const cards = await Promise.all(
                         ids.map(async (id) => {
                             const response = await fetch(`${API_BASE_URL}/${id}`, {
@@ -183,6 +208,15 @@ function App() {
                   onShare={handleShareGallery}
                 />
               } />
+              <Route
+  path="/galeria/compartilhada"
+  element={
+    <PastaCompartilhada
+      items={galleryItems}
+      onInspectCard={handleInspectCard}
+    />
+  }
+/>
             </Routes>
           </div>
           {isModalOpen && selectedCard && (
@@ -190,7 +224,8 @@ function App() {
               card={selectedCard}
               onClose={handleCloseModal}
               onAddToGallery={handleAddToGallery}
-              isInGallery={galleryItems.some(item => item.id === selectedCard.id)}
+              isInGallery={galleryItems.some(item => item.card.id === selectedCard.id)}
+              isAddingToGallery={isAddingToGallery}
             />
           )}
           <Footer />

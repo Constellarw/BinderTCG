@@ -9,11 +9,11 @@ function Gallery({ items, onInspectCard, onRemoveCard, onShare }) {
                 <p id="empty-gallery-message">Sua galeria está vazia. Adicione cartas da busca!</p>
             ) : (
                 <div id="gallery-grid" className="card-grid">
-                    {items.map(card => (
-                        <div key={card.id} style={{ position: 'relative' }}>
-                            <CardPreview card={card} onInspect={() => onInspectCard(card)} />
+                    {items.map(item => (
+                        <div key={item.card.id} style={{ position: 'relative' }}>
+                            <CardPreview card={item.card} onInspect={() => onInspectCard(item.card, false)} />
                             <button 
-                                onClick={() => onRemoveCard(card.id)}
+                                onClick={() => onRemoveCard(item.card.id)}
                                 style={{
                                     position: 'absolute', top: '5px', right: '5px',
                                     background: '#e3350d', color: 'white', border: 'none',
@@ -25,6 +25,7 @@ function Gallery({ items, onInspectCard, onRemoveCard, onShare }) {
                             >
                                 X
                             </button>
+                            <span>{item.card.name} (x{item.quantity})</span>
                         </div>
                     ))}
                 </div>
