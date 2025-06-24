@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Navigation from './Navigation';
 import SearchBar from './SearchBar';
@@ -7,6 +7,8 @@ import CardList from './CardList';
 import Gallery from './Gallery';
 import CardInspectorModal from './CardInspectorModal';
 import Footer from './Footer';
+import Decks from './Decks';
+import DeckView from './DeckView';
 import './App.css';
 
 const POKEMON_API_KEY = "ded63161-025b-4626-b221-a5bb93fa72ed";
@@ -52,6 +54,13 @@ function App() {
     });
     const [sharedGalleryItems, setSharedGalleryItems] = useState([]);
     const [galleryLoaded, setGalleryLoaded] = useState(false);
+    const [myDecks, setMyDecks] = useState(() => {
+        const saved = localStorage.getItem('pokemonDecks');
+        return saved ? JSON.parse(saved) : [];
+    });
+    const [isFromDeckView, setIsFromDeckView] = useState(false);
+    const [inspectedDeckId, setInspectedDeckId] = useState(null);
+    const location = useLocation();
 
     useEffect(() => {
         const storedGallery = localStorage.getItem('pokemonGallery');
@@ -103,10 +112,12 @@ function App() {
         }
     };
 
-    const handleInspectCard = (card, adding = false, shared = false) => {
+    const handleInspectCard = (card, adding = false, shared = false, fromDeckView = false, deckId = null) => {
       setSelectedCard(card);
       setIsModalOpen(true);
       setIsAddingToGallery(adding);
+      setIsFromDeckView(fromDeckView);
+      setInspectedDeckId(deckId);
       if (shared) setActiveView('gallery');
     };
 
@@ -186,28 +197,78 @@ function App() {
     }, []);
 
 
+    const handleCreateDeck = (name) => {
+        setMyDecks(prev => [...prev, { id: Date.now().toString(), name, cards: [] }]);
+    };
+
+    const handleAddCardToDeck = (deckId, card, quantity = 1) => {
+        setMyDecks(prev => prev.map(deck => {
+            if (deck.id !== deckId) return deck;
+
+            // Soma todas as cartas com o mesmo nome no deck
+            const sameNameCount = deck.cards
+                .filter(item => item.card.name === card.name)
+                .reduce((sum, item) => sum + item.quantity, 0);
+
+            if (sameNameCount + quantity > 4) {
+                alert('Você só pode ter até 4 cartas com o mesmo nome em um deck.');
+                return deck;
+            }
+
+            const total = deck.cards.reduce((sum, item) => sum + item.quantity, 0);
+            if (total + quantity > 60) {
+                alert('Limite de 60 cartas por deck.');
+                return deck;
+            }
+
+            const existing = deck.cards.find(item => item.card.id === card.id);
+            if (existing) {
+                return {
+                    ...deck,
+                    cards: deck.cards.map(item =>
+                        item.card.id === card.id
+                            ? { ...item, quantity: item.quantity + quantity }
+                            : item
+                    )
+                };
+            }
+            return { ...deck, cards: [...deck.cards, { card, quantity }] };
+        }));
+    };
+
+    const handleRemoveCardFromDeck = (deckId, cardId) => {
+        setMyDecks(prev => prev.map(deck =>
+            deck.id === deckId
+                ? { ...deck, cards: deck.cards.filter(item => item.card.id !== cardId) }
+                : deck
+        ));
+    };
+
+    useEffect(() => {
+        localStorage.setItem('pokemonDecks', JSON.stringify(myDecks));
+    }, [myDecks]);
+
     return (
-      <Router>
-        <div className={`App${darkMode ? ' dark-mode' : ''}`}>
-          <Header />
-          <Navigation />
-          <div className="container">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/buscar-cartas" element={
-                <section id="search-section" className="section">
-                  <SearchBar onSearch={handleSearch} initialTerm={searchTerm} />
-                  {isLoading && <div id="loading-message">Carregando...</div>}
-                  <CardList
-                    cards={searchResults}
-                    onInspectCard={handleInspectCard}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={(page) => handleSearch(searchTerm, page)}
-                  />
-                </section>
-              } />
-              <Route
+      <div className={`App${darkMode ? ' dark-mode' : ''}`}>
+        <Header />
+        <Navigation />
+        <div className="container">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/buscar-cartas" element={
+              <section id="search-section" className="section">
+                <SearchBar onSearch={handleSearch} initialTerm={searchTerm} />
+                {isLoading && <div id="loading-message">Carregando...</div>}
+                <CardList
+                  cards={searchResults}
+                  onInspectCard={handleInspectCard}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => handleSearch(searchTerm, page)}
+                />
+              </section>
+            } />
+            <Route
   path="/galeria/compartilhada"
   element={
     <PastaCompartilhada
@@ -216,7 +277,7 @@ function App() {
     />
   }
 />
-              <Route
+            <Route
   path="/minha-galeria"
   element={
     galleryLoaded ? (
@@ -231,27 +292,49 @@ function App() {
     )
   }
 />
-            </Routes>
-          </div>
-          {isModalOpen && selectedCard && (
-            <CardInspectorModal
-              card={selectedCard}
-              onClose={handleCloseModal}
-              onAddToGallery={handleAddToGallery}
-              isInGallery={myGalleryItems.some(item =>
-                (item.card ? item.card.id : item.id) === selectedCard.id
-              )}
-              isAddingToGallery={isAddingToGallery}
-              isSharedGallery={activeView === 'gallery' && window.location.pathname === "/galeria/compartilhada"}
-            />
-          )}
-          {/* Footer só aparece se NÃO estiver na busca com pesquisa feita e NÃO na pasta compartilhada */}
-          {!(
-            (window.location.pathname === "/buscar-cartas" && searchTerm && searchResults.length > 0) ||
-            window.location.pathname === "/galeria/compartilhada" || window.location.pathname === "/minha-galeria"
-          ) && <Footer />}
+            <Route
+                path="/meus-decks"
+                element={
+                  <Decks
+                    decks={myDecks}
+                    onCreateDeck={handleCreateDeck}
+                  />
+                }
+              />
+              <Route
+                path="/meus-decks/:deckId"
+                element={
+                  <DeckView
+                    decks={myDecks}
+                    onInspectCard={handleInspectCard}
+                    onRemoveCardFromDeck={handleRemoveCardFromDeck}
+                    onAddCardToDeck={handleAddCardToDeck} // <-- Adicione esta linha
+                  />
+                }
+              />
+          </Routes>
         </div>
-      </Router>
+        {isModalOpen && selectedCard && (
+          <CardInspectorModal
+            card={selectedCard}
+            onClose={handleCloseModal}
+            onAddToGallery={handleAddToGallery}
+            isInGallery={myGalleryItems.some(item =>
+              (item.card ? item.card.id : item.id) === selectedCard.id
+            )}
+            isAddingToGallery={isAddingToGallery}
+            isSharedGallery={activeView === 'gallery' && window.location.pathname === "/galeria/compartilhada"}
+            decks={myDecks}
+            onAddCardToDeck={handleAddCardToDeck}
+            isFromDeckView={isFromDeckView}
+            inspectedDeckId={inspectedDeckId}
+          />
+        )}
+        {/* Footer só aparece se NÃO estiver em meus-decks/:deckId */}
+        {!location.pathname.match(/^\/meus-decks\/[^/]+$/) && (
+          <Footer />
+        )}
+      </div>
     );
 }
 

@@ -1,14 +1,16 @@
 import React from 'react';
 
-function CardPreview({ card, onInspect }) {
-    const imageUrl = card.images && card.images.small ? card.images.small : 'placeholder.png';
-    const cardName = card.name || 'Nome Indisponível';
-
+function CardPreview({ card, onInspect, style, hideName }) {
     return (
-        <div className="card-preview" onClick={onInspect} title={`Inspecionar ${cardName}`}>
-            <img src={imageUrl} alt={cardName} />
-            <p>{cardName}</p>
+        <div onClick={onInspect} style={style}>
+            <img src={card.images?.small || 'placeholder.png'} alt="" style={{ width: '100%', borderRadius: 6 }} />
+            {!hideName && (
+                <div style={{ textAlign: 'center', marginTop: 4, fontSize: 13, color: '#fff' }}>
+                    {card.name}
+                </div>
+            )}
         </div>
     );
 }
+
 export default CardPreview;
