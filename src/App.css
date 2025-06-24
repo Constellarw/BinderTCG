@@ -1,3 +1,5 @@
+
+
 /* Estilos para centralizar o conteúdo principal e dar algum espaçamento */
 .App {
   text-align: center; /* Ou remova se não quiser tudo centralizado por padrão */
@@ -143,10 +145,15 @@ nav {
 }
 
 #inspected-card-container {
-  width: 240px; 
-  height: 330px;
-  perspective: 1000px;
+  width: 340px;   /* antes: 240px */
+  height: 470px;  /* antes: 330px */
+  perspective: 1200px;
   margin: 0 auto;
+
+   @media (max-width: 600px) {
+    width: 307px;
+    height: 414px;
+  }
 }
 
 .close-button {
@@ -323,4 +330,13 @@ nav {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.card__rotator {
+  transition: transform 0.25s cubic-bezier(.4,2,.6,1);
+}
+.card.interacting .card__rotator {
+  transition: none;
+}
+
+
 
