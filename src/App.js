@@ -138,7 +138,8 @@ function App() {
 
     const handleShareGallery = () => {
         const cardIds = myGalleryItems.map(item => item.card.id).join(',');
-        const shareUrl = `${window.location.origin}/galeria/compartilhada?gallery=${cardIds}`;
+        const encoded = btoa(cardIds); // base64
+        const shareUrl = `${window.location.origin}/galeria/compartilhada?g=${encoded}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => alert('Link da galeria copiado para a área de transferência!'))
             .catch(err => console.error('Erro ao copiar link: ', err));
@@ -147,9 +148,17 @@ function App() {
     // Efeito para carregar galeria da URL
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        const galleryQuery = urlParams.get('gallery');
+        // Aceita tanto 'g' (novo) quanto 'gallery' (antigo)
+        const galleryQuery = urlParams.get('g') || urlParams.get('gallery');
         if (window.location.pathname === "/galeria/compartilhada" && galleryQuery) {
-            const ids = galleryQuery.split(',');
+            let ids;
+            try {
+                // Se for base64, decodifica
+                ids = atob(galleryQuery).split(',');
+            } catch {
+                // Se não for base64, assume CSV puro
+                ids = galleryQuery.split(',');
+            }
             const fetchGalleryCards = async () => {
                 setIsLoading(true);
                 try {
