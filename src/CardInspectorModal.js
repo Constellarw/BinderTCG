@@ -6,6 +6,10 @@ function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery, isAddi
 
     if (!card) return null;
 
+    // Só mostra o botão se NÃO estiver na galeria (isSharedGallery === false E window.location.pathname !== "/minha-galeria")
+    const isOnMyGalleryPage = window.location.pathname === "/minha-galeria";
+    const canAddToGallery = !isSharedGallery && !isOnMyGalleryPage;
+
     return (
         <div id="card-inspector-modal" className="modal" style={{ display: 'flex' }}> 
             <div className="modal-content">
@@ -13,7 +17,7 @@ function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery, isAddi
                 <div id="inspected-card-container">
                     <InspectedCard cardData={card} />
                 </div>
-                {!isSharedGallery && (
+                {canAddToGallery && (
                     <>
                         {/* Seletor de quantidade */}
                         {isAddingToGallery && (
@@ -25,18 +29,10 @@ function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery, isAddi
                                 style={{ width: 60, marginRight: 8, position: 'relative', top:'50px',height: 30, right: '116px' }}
                             />
                         )}
-                        {/* Mensagem "Esta carta já está na sua galeria!" */}
-                        {isInGallery && (
-                            <p style={{ textAlign: 'center', marginTop: '15px', color: '#4CAF50' }}>
-                                Esta carta já está na sua galeria!
-                            </p>
-                        )}
+                        <button id="add-to-gallery-button" onClick={() => onAddToGallery(card, quantity)}>
+                            Salvar na Galeria
+                        </button>
                     </>
-                )}
-                {!isInGallery && !isSharedGallery && (
-                    <button id="add-to-gallery-button" onClick={() => onAddToGallery(card, quantity)}>
-                        Salvar na Galeria
-                    </button>
                 )}
             </div>
         </div>
