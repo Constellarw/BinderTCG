@@ -204,6 +204,7 @@ function InspectedCard({ cardData }) {
           onPointerOut={handlePointerOut}
           onTouchMove={handleTouchMove}
           onTouchEnd={handlePointerOut}
+          data-rarity={cardData.rarity ? cardData.rarity.toLowerCase() : undefined}
         >
           <div className="card__front">
             <img
@@ -216,6 +217,17 @@ function InspectedCard({ cardData }) {
           </div>
           <div className="card__shine"></div>
           <div className="card__glare"></div>
+          {/* Adiciona glare extra e glitter se for 'double rare' */}
+          {cardData.rarity && cardData.rarity.toLowerCase() === 'double rare' && (
+            <>
+              <div className="card__glare2"></div>
+              <div className="card__glitter"></div>
+            </>
+          )}
+          {/* Adiciona glare2 se for 'special illustration rare' */}
+          {cardData.rarity && cardData.rarity.toLowerCase() === 'special illustration rare' && (
+            <div className="card__glare2"></div>
+          )}
           <div className="card__back">
             <img
               src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg"
