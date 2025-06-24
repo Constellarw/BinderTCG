@@ -1,7 +1,21 @@
 .card {
 
-  --grain: url("/src/img/grain.webp");
-  --glitter: url("/src/img/glitter.png");
+  --grain: url(/src/img/grain.webp);
+  --glitter: url(/src/img/glitter.png);
+  --noise: url(https://poke-holo.b-cdn.net/foils/151/noise-base.webp);
+  --noise-over: url(https://poke-holo.b-cdn.net/foils/151/noise-top.webp);
+  --iri1: url(https://poke-holo.b-cdn.net/foils/151/iri-1.webp);
+  --iri2: url(https://poke-holo.b-cdn.net/foils/151/iri-2.webp);
+  --iri3: url(https://poke-holo.b-cdn.net/foils/151/iri-3.webp);
+  --iri4: url(https://poke-holo.b-cdn.net/foils/151/iri-4.webp);
+  --iri5: url(https://poke-holo.b-cdn.net/foils/151/iri-5.webp);
+  --iri6: url(https://poke-holo.b-cdn.net/foils/151/iri-6.webp);
+  --iri7: url(https://poke-holo.b-cdn.net/foils/151/iri-7.webp);
+  --iri8: url(https://poke-holo.b-cdn.net/foils/151/iri-8.webp);
+  --iri9: url(https://poke-holo.b-cdn.net/foils/151/iri-9.webp);
+  --birthday: url(https://poke-holo.b-cdn.net/foils/151/birthday-holo.webp);
+  --birthday-dank: url(https://poke-holo.b-cdn.net/foils/151/birthday-holo-dank.webp);
+  --birthday-dank2: url(https://poke-holo.b-cdn.net/foils/151/birthday-holo-dank-2.webp);
   --glittersize: 25%;
 
   --space: 5%;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import InspectedCard from './InspectedCard'; // Este componente cuidará da renderização com classes de efeito
+import InspectedCard from './InspectedCard'; 
 
 function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery, isAddingToGallery, isSharedGallery }) {
     const [quantity, setQuantity] = useState(1);
@@ -7,7 +7,7 @@ function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery, isAddi
     if (!card) return null;
 
     return (
-        <div id="card-inspector-modal" className="modal" style={{ display: 'flex' }}> {/* Alterado para flex para alinhar */}
+        <div id="card-inspector-modal" className="modal" style={{ display: 'flex' }}> 
             <div className="modal-content">
                 <span className="close-button" id="close-modal-button" onClick={onClose}>&times;</span>
                 <div id="inspected-card-container">
