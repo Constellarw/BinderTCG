@@ -38,7 +38,6 @@ function PastaCompartilhada({ items, onInspectCard }) {
 function App() {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    const [galleryItems, setGalleryItems] = useState([]); // [{ card, quantity }]
     const [selectedCard, setSelectedCard] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -47,18 +46,24 @@ function App() {
     const [totalPages, setTotalPages] = useState(1);
     const [darkMode, setDarkMode] = useState(false);
     const [isAddingToGallery, setIsAddingToGallery] = useState(false);
+    const [myGalleryItems, setMyGalleryItems] = useState(() => {
+        const saved = localStorage.getItem('pokemonGallery');
+        return saved ? JSON.parse(saved) : [];
+    });
+    const [sharedGalleryItems, setSharedGalleryItems] = useState([]);
+    const [galleryLoaded, setGalleryLoaded] = useState(false);
 
- 
     useEffect(() => {
         const storedGallery = localStorage.getItem('pokemonGallery');
         if (storedGallery) {
-            setGalleryItems(JSON.parse(storedGallery));
+            setMyGalleryItems(JSON.parse(storedGallery));
         }
+        setGalleryLoaded(true);
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('pokemonGallery', JSON.stringify(galleryItems));
-    }, [galleryItems]);
+        localStorage.setItem('pokemonGallery', JSON.stringify(myGalleryItems));
+    }, [myGalleryItems]);
 
     useEffect(() => {
         if (darkMode) {
@@ -111,7 +116,7 @@ function App() {
     };
 
     const handleAddToGallery = (card, quantity = 1) => {
-        setGalleryItems(prev => {
+        setMyGalleryItems(prev => {
             const existing = prev.find(item => item.card.id === card.id);
             if (existing) {
                 // Atualiza a quantidade
@@ -128,11 +133,11 @@ function App() {
     };
 
     const handleRemoveFromGallery = (cardId) => {
-        setGalleryItems(galleryItems.filter(item => item.card.id !== cardId));
+        setMyGalleryItems(prev => prev.filter(item => item.card.id !== cardId));
     };
 
     const handleShareGallery = () => {
-        const cardIds = galleryItems.map(item => item.card.id).join(',');
+        const cardIds = myGalleryItems.map(item => item.card.id).join(',');
         const shareUrl = `${window.location.origin}/galeria/compartilhada?gallery=${cardIds}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => alert('Link da galeria copiado para a área de transferência!'))
@@ -143,7 +148,6 @@ function App() {
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const galleryQuery = urlParams.get('gallery');
-        // Verifica se está na rota de pasta compartilhada
         if (window.location.pathname === "/galeria/compartilhada" && galleryQuery) {
             const ids = galleryQuery.split(',');
             const fetchGalleryCards = async () => {
@@ -159,7 +163,7 @@ function App() {
                             return data.data || null;
                         })
                     );
-                    setGalleryItems(cards.filter(Boolean));
+                    setSharedGalleryItems(cards.filter(Boolean));
                     setActiveView('gallery');
                 } catch (error) {
                     console.error("Erro ao carregar galeria da URL:", error);
@@ -194,21 +198,28 @@ function App() {
                   />
                 </section>
               } />
-              <Route path="/minha-galeria" element={
-                <Gallery
-                  items={galleryItems}
-                  onInspectCard={handleInspectCard}
-                  onRemoveCard={handleRemoveFromGallery}
-                  onShare={handleShareGallery}
-                />
-              } />
               <Route
   path="/galeria/compartilhada"
   element={
     <PastaCompartilhada
-      items={galleryItems}
+      items={sharedGalleryItems}
       onInspectCard={(card) => handleInspectCard(card, false, true)}
     />
+  }
+/>
+              <Route
+  path="/minha-galeria"
+  element={
+    galleryLoaded ? (
+      <Gallery
+        items={myGalleryItems}
+        onInspectCard={handleInspectCard}
+        onRemoveCard={handleRemoveFromGallery}
+        onShare={handleShareGallery}
+      />
+    ) : (
+      <div>Carregando galeria...</div>
+    )
   }
 />
             </Routes>
@@ -218,7 +229,7 @@ function App() {
               card={selectedCard}
               onClose={handleCloseModal}
               onAddToGallery={handleAddToGallery}
-              isInGallery={galleryItems.some(item =>
+              isInGallery={myGalleryItems.some(item =>
                 (item.card ? item.card.id : item.id) === selectedCard.id
               )}
               isAddingToGallery={isAddingToGallery}
