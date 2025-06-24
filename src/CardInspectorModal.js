@@ -61,7 +61,11 @@ function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery, isAddi
                     <input
                       type="number"
                       min={1}
-                      max={4}
+                      max={
+                        card.supertype === "Energy"
+                          ? 60 // ou o máximo restante do deck, se você controla isso
+                          : 4
+                      }
                       value={quantity}
                       onChange={e => setQuantity(Number(e.target.value))}
                       style={{ width: 60, marginRight: 8 }}

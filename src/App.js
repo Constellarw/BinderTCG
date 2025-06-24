@@ -210,7 +210,8 @@ function App() {
                 .filter(item => item.card.name === card.name)
                 .reduce((sum, item) => sum + item.quantity, 0);
 
-            if (sameNameCount + quantity > 4) {
+            // Só aplica o limite de 4 para cartas que NÃO são de energia
+            if (card.supertype !== "Energy" && sameNameCount + quantity > 4) {
                 alert('Você só pode ter até 4 cartas com o mesmo nome em um deck.');
                 return deck;
             }

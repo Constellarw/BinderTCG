@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import CardPreview from './CardPreview';
-import html2canvas from 'html2canvas'; // Instale: npm install html2canvas
 
 const API_BASE_URL = "https://api.pokemontcg.io/v2/cards";
 const POKEMON_API_KEY = "ded63161-025b-4626-b221-a5bb93fa72ed";
@@ -122,62 +121,8 @@ function DeckView({ decks, onInspectCard, onRemoveCardFromDeck }) {
       .catch(() => alert('Erro ao copiar texto.'));
   };
 
-  // Função para tirar print do deck
-  const handleShareDeckImage = async () => {
-    const printDiv = document.getElementById('deckview-print');
-    if (!printDiv) return;
-    const canvas = await html2canvas(printDiv, { backgroundColor: '#222' });
-    canvas.toBlob(blob => {
-      if (blob) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${deck.name.replace(/\s+/g, '_')}_deck.png`;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-    });
-  };
-
-  const renderPrintGrid = () => (
-    <div
-      id="deckview-print"
-      style={{
-        position: 'fixed',
-        left: '-9999px',
-        top: 0,
-        width: 800,
-        background: '#222',
-        padding: 24,
-        display: 'grid',
-        gridTemplateColumns: 'repeat(10, 80px)',
-        gap: 8,
-        zIndex: -1
-      }}
-    >
-      {groupedCards.flatMap(({ card, quantity }) =>
-        Array.from({ length: quantity }).map((_, idx) => (
-          <img
-            key={card.id + '-' + idx}
-            src={card.images && card.images.small ? card.images.small : 'placeholder.png'}
-            alt=""
-            crossOrigin="anonymous"
-            style={{
-              width: 80,
-              height: 112,
-              borderRadius: 6,
-              background: '#181818',
-              objectFit: 'cover'
-            }}
-          />
-        ))
-      ).slice(0, 60)}
-    </div>
-  );
-
   return (
     <>
-      {renderPrintGrid()}
       <section
         className="section"
         style={{
@@ -204,7 +149,7 @@ function DeckView({ decks, onInspectCard, onRemoveCardFromDeck }) {
           {/* Botão de compartilhar */}
           <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
             <button onClick={handleCopyDeckText}>Copiar como texto</button>
-            <button onClick={handleShareDeckImage}>Compartilhar imagem do deck</button>
+            {/* <button onClick={handleShareDeckImage}>Compartilhar imagem do deck</button> */}
           </div>
           <button onClick={() => navigate('/meus-decks')} style={{ marginBottom: 16 }}>← Voltar</button>
           <h2>
