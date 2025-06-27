@@ -1,0 +1,14 @@
+backend/
+node_modules/
+*.md
+test-*.sh
+debug-*.js
+generate-test-token.js
+verificar-sistema.sh
+.env
+CORRIGIR_OAUTH.md
+GALERIA_COMPARTILHADA.md
+IMPLEMENTACAO_COMPLETA.md
+INSTRUCOES_SETUP.sh
+SETUP_OAUTH.md
+SOLUCAO_GALERIA_COMPARTILHADA.md
