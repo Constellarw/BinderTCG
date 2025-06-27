@@ -1,12 +1,90 @@
 # 🔐 CORRIGINDO PROBLEMAS DE OAUTH
 
-## ❌ Problema: "/auth/google" retorna "Not Found"
+## 🚨 PROBLEMA URGENTE: Login cai na página do backend
+
+### ❌ Sintomas:
+- Ao clicar "Login com Google" você é redirecionado para:
+- `https://bindertcg-backend.onrender.com/auth/google`
+- A página mostra "Not Found" em vez de redirecionar para o Google
+
+### 🎯 CAUSA:
+O backend no Render não está funcionando corretamente. Todas as rotas retornam "Not Found".
+
+### ⚡ SOLUÇÃO URGENTE (5 minutos):
+
+1. **Acesse o painel do Render:**
+   - [dashboard.render.com](https://dashboard.render.com)
+   - Clique no seu app backend
+
+2. **Corrigir Root Directory:**
+   - Vá em **Settings** → **Build & Deploy**
+   - Em **Root Directory** digite: `backend`
+   - Clique **Save Changes**
+
+3. **Redeploy Manual:**
+   - Vá em **Manual Deploy**
+   - Clique **Deploy latest commit**
+   - Aguarde 3-5 minutos
+
+4. **Teste se funcionou:**
+   ```bash
+   curl https://bindertcg-backend.onrender.com/health
+   ```
+   
+   Deve retornar:
+   ```json
+   {"status":"OK","message":"BinderTCG Backend is running"}
+   ```
+
+---
+
+## 🚨 ERRO: redirect_uri_mismatch
+
+### ❌ Sintomas:
+- Google mostra: "Não foi possível fazer login"
+- Erro 400: redirect_uri_mismatch
+- "esse app enviou uma solicitação inválida"
+
+### 🎯 CAUSA:
+A URL de callback que o backend está enviando para o Google NÃO está configurada no Google Cloud Console.
+
+### ⚡ SOLUÇÃO (10 minutos):
+
+1. **Descobrir a URL exata do backend:**
+   - No painel Render, copie a URL do seu app
+   - Ex: `https://bindertcg-backend.onrender.com`
+
+2. **Configurar no Google Cloud Console:**
+   - Acesse: [console.cloud.google.com](https://console.cloud.google.com)
+   - APIs & Services → Credentials
+   - Clique no seu OAuth 2.0 Client ID
+
+3. **Adicionar Authorized redirect URIs:**
+   ```
+   https://bindertcg-backend.onrender.com/auth/google/callback
+   http://localhost:5000/auth/google/callback
+   ```
+   (Substitua pela URL real do seu backend)
+
+4. **Salvar e aguardar:**
+   - Clique "Save"
+   - Aguarde 5-10 minutos para propagação
+   - Limpe cache do navegador
+   - Teste novamente
+
+### 🔍 **URLs de callback mais comuns:**
+- `https://bindertcg-backend.onrender.com/auth/google/callback`
+- `http://localhost:5000/auth/google/callback`
+
+---
+
+## ❌ Outros Problemas de OAuth
 
 ### 🔍 Possíveis Causas
 
-1. **Variáveis de ambiente faltando**
-2. **callbackURL incorreta no Passport**
-3. **Rotas não carregadas corretamente**
+1. **Backend não funcionando** (problema acima)
+2. **Variáveis de ambiente faltando**
+3. **callbackURL incorreta no Passport**
 4. **Google OAuth mal configurado**
 
 ---

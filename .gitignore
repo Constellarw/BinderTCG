@@ -22,3 +22,31 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .vercel
+
+# Environment files
+.env
+backend/.env
+.env.production
+
+# Scripts de teste e deploy (comentar se quiser incluir no repo)
+check-*.sh
+test-*.sh
+deploy-*.sh
+prepare-git.sh
+URGENTE_*.sh
+
+# Documentação de deploy (comentar se quiser incluir no repo)
+DEPLOY_*.md
+RENDER_*.md
+SETUP_*.md
+CORRIGIR_*.md
+SOLUCAO_*.md
+GALERIA_*.md
+IMPLEMENTACAO_*.md
+INSTRUCOES_*.sh
+README_FUNCIONANDO.md
+
+# Arquivos de configuração específicos
+vercel.json
+backend/Procfile
+backend/token.txt
