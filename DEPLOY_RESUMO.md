@@ -1,6 +1,29 @@
 # 🚀 DEPLOY RÁPIDO - RESUMO DOS PASSOS
 
-## 📋 ORDEM DE DEPLOY (IMPORTANTE!)
+# 🚀 DEPLOY RÁPIDO - GRATUITO E FÁCIL
+
+## 🎯 DEPLOY EM 3 PASSOS (100% GRATUITO)
+
+### 1. ✅ Verificar se está tudo pronto
+```bash
+./check-deploy-gratuito.sh
+```
+
+### 2. � Deploy automático
+```bash
+./deploy-gratuito.sh
+```
+
+### 3. 🔐 Configurar OAuth
+```bash
+# Google Cloud Console:
+# - Authorized JavaScript origins: https://sua-app.vercel.app
+# - Authorized redirect URIs: https://sua-app.onrender.com/auth/google/callback
+```
+
+---
+
+## �📋 ORDEM DE DEPLOY (IMPORTANTE!)
 
 ### 1. 🗄️ PRIMEIRO: Deploy do Backend (GRATUITO)
 ```bash
@@ -37,10 +60,10 @@ echo "REACT_APP_API_URL=https://sua-app.onrender.com" > .env.production
 ### 3. 🚀 TERCEIRO: Deploy do Frontend
 ```bash
 # Verificar se está tudo pronto
-./check-deploy-ready.sh
+./check-deploy-gratuito.sh
 
 # Deploy na Vercel
-./deploy-production.sh
+./deploy-gratuito.sh
 ```
 
 **⚠️ ANOTE A URL DA VERCEL QUE FOR GERADA!**
@@ -67,10 +90,10 @@ echo "REACT_APP_API_URL=https://sua-app.onrender.com" > .env.production
 
 ```bash
 # Verificar se está pronto para deploy
-./check-deploy-ready.sh
+./check-deploy-gratuito.sh
 
-# Deploy automático
-./deploy-production.sh
+# Deploy automático gratuito
+./deploy-gratuito.sh
 
 # Build manual
 npm run build
@@ -81,20 +104,54 @@ npx serve -s build
 
 ---
 
-## 📞 PRECISA DE AJUDA?
+## 💰 CUSTOS (100% GRATUITO!)
 
-1. **Leia primeiro**: `DEPLOY_PRODUCTION.md`
-2. **Configure URLs**: `CONFIGURAR_URLS_PRODUCAO.md`
-3. **Backend**: `backend/DEPLOY_BACKEND.md`
+### ✅ Render (Backend)
+- **750 horas/mês gratuitas**
+- Sleep após 15min de inatividade
+- Acordar automático em ~30s
+
+### ✅ Vercel (Frontend)  
+- **100GB bandwidth/mês**
+- Deploys ilimitados
+- Custom domain gratuito
+
+### ✅ MongoDB Atlas
+- **512MB storage gratuito**
+- Cluster compartilhado
+- Suficiente para o projeto
 
 ---
 
-## 🎯 RESUMO: 5 PASSOS PARA PRODUÇÃO
+## 📞 PRECISA DE AJUDA?
 
-1. ✅ **Deploy Backend** (Railway/Render)
-2. ✅ **Configurar URLs** (.env.production)
-3. ✅ **Deploy Frontend** (Vercel)
-4. ✅ **Configurar OAuth** (Google Console)
-5. ✅ **Testar Tudo** (Funcionalidades)
+1. **Leia primeiro**: `DEPLOY_GRATUITO.md`
+2. **Configure URLs**: `CONFIGURAR_URLS_PRODUCAO.md`
+3. **Backend**: `backend/DEPLOY_BACKEND.md`
+4. **OAuth**: `SETUP_OAUTH.md`
 
-**🚀 Sucesso garantido seguindo esta ordem!**
+---
+
+## 🎯 RESUMO: 3 OPÇÕES DE DEPLOY
+
+### 🆓 OPÇÃO 1: 100% GRATUITO (Recomendado)
+```bash
+# Backend: Render (gratuito)
+# Frontend: Vercel (gratuito)
+# Deploy automático: 
+./deploy-gratuito.sh
+```
+
+### 💰 OPÇÃO 2: Render + Vercel
+```bash
+# Leia: DEPLOY_GRATUITO.md
+# Deploy em 10 minutos
+```
+
+### 🚀 OPÇÃO 3: Manual
+```bash
+# Leia: DEPLOY_PRODUCTION.md
+# Para usuários avançados
+```
+
+**🚀 Recomendação: Use ./deploy-gratuito.sh para deploy rápido e fácil!**
