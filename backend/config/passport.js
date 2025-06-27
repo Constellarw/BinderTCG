@@ -6,7 +6,7 @@ passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.NODE_ENV === 'production' 
-    ? `${process.env.BACKEND_URL || 'https://bindertcg-backend.onrender.com'}/auth/google/callback`
+    ? `${process.env.BACKEND_URL || 'https://bindertcg.onrender.com'}/auth/google/callback`
     : "http://localhost:5000/auth/google/callback"
 }, async (accessToken, refreshToken, profile, done) => {
   try {
