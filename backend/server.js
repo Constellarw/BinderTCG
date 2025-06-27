@@ -27,6 +27,7 @@ app.use(limiter);
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
+  'https://binder-tcg.vercel.app/',
   process.env.FRONTEND_URL,
   // Adicione aqui a URL da Vercel quando fazer deploy
   // 'https://seu-projeto.vercel.app'

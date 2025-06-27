@@ -26,17 +26,31 @@ npm start # Deve rodar sem erros
 6. **Plan**: Deixe "Free" selecionado
 
 #### 1.4 Configurar Variáveis de Ambiente
-No painel do Render, adicione estas variáveis:
+**📍 ONDE ENCONTRAR O PAINEL:**
+
+1. Após criar o Web Service, você será redirecionado para o **Dashboard do seu app**
+2. Na barra lateral esquerda, clique em **"Environment"** 
+3. Ou vá em: `https://dashboard.render.com/web/[SEU-APP-ID]` → aba **"Environment"**
+
+**🔧 COMO ADICIONAR AS VARIÁVEIS:**
+
+1. No painel "Environment", clique em **"Add Environment Variable"**
+2. Adicione cada variável uma por vez:
 
 ```bash
-NODE_ENV=production
-PORT=10000
-MONGODB_URI=mongodb+srv://seu-usuario:senha@cluster.mongodb.net/bindertcg
-GOOGLE_CLIENT_ID=seu-google-client-id
-GOOGLE_CLIENT_SECRET=seu-google-client-secret
-JWT_SECRET=sua-jwt-secret-super-segura
-FRONTEND_URL=https://sua-app.vercel.app
+# Adicione estas variáveis UMA POR VEZ:
+Key: NODE_ENV          | Value: production
+Key: PORT              | Value: 10000
+Key: MONGODB_URI       | Value: mongodb+srv://seu-usuario:senha@cluster.mongodb.net/bindertcg
+Key: GOOGLE_CLIENT_ID  | Value: seu-google-client-id
+Key: GOOGLE_CLIENT_SECRET | Value: seu-google-client-secret
+Key: JWT_SECRET        | Value: sua-jwt-secret-super-segura
+Key: FRONTEND_URL      | Value: https://sua-app.vercel.app
 ```
+
+**⚠️ APÓS ADICIONAR:** Clique em **"Save Changes"** - o app fará redeploy automático!
+
+**📖 GUIA VISUAL DETALHADO:** Veja `RENDER_PAINEL_GUIA.md` para screenshots e passo-a-passo visual.
 
 **⚠️ IMPORTANTE:** Anote a URL que o Render gerar (ex: `https://bindertcg-backend.onrender.com`)
 
