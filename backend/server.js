@@ -67,9 +67,30 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'BinderTCG Backend API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      auth: '/auth/*',
+      decks: '/api/decks/*',
+      gallery: '/api/gallery/*'
+    }
+  });
+});
+
 // Health check route
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'BinderTCG Backend is running' });
+  res.json({ 
+    status: 'OK', 
+    message: 'BinderTCG Backend is running',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV,
+    port: process.env.PORT || 5000
+  });
 });
 
 // Routes

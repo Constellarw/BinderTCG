@@ -61,7 +61,7 @@ Key: FRONTEND_URL      | Value: https://sua-app.vercel.app
 #### 2.1 Configurar URLs de Produção
 ```bash
 # Criar arquivo .env.production
-echo "REACT_APP_API_URL=https://sua-app.onrender.com" > .env.production
+echo "REACT_APP_API_URL=https://bindertcg-backend.onrender.com" > .env.production
 ```
 
 #### 2.2 Atualizar CORS no Backend
@@ -172,3 +172,60 @@ const allowedOrigins = [
 ```
 
 **🎯 Total: ~10 minutos para deploy completo!**
+
+---
+
+## 🚨 RESOLVENDO ERRO "Route not found"
+
+### ❌ Problema
+Se você acessar seu backend e ver:
+```json
+{"error":"Route not found"}
+```
+
+### 🔧 Solução (5 passos)
+
+#### 1. Verificar Root Directory
+1. No painel do Render, vá em **"Settings"**
+2. Procure por **"Build & Deploy"**
+3. Em **"Root Directory"** deve estar: `backend`
+4. Se estiver vazio, clique **"Edit"** e digite: `backend`
+5. Clique **"Save Changes"**
+
+#### 2. Verificar Comandos
+- **Build Command:** `npm install`
+- **Start Command:** `npm start`
+
+#### 3. Forçar Redeploy
+1. Vá na aba **"Manual Deploy"**
+2. Clique **"Deploy latest commit"**
+3. Aguarde 2-5 minutos
+
+#### 4. Testar com Script
+```bash
+# Execute o teste automático
+./test-backend.sh
+```
+
+#### 5. Verificar Logs
+1. Aba **"Logs"** no Render
+2. Procure por erros ou warnings
+3. Deve aparecer: `Server running on port 10000`
+
+### ✅ Como Confirmar que Funcionou
+Acesse no navegador:
+```
+https://seu-app.onrender.com/health
+```
+
+Deve retornar:
+```json
+{
+  "status": "OK",
+  "message": "BinderTCG Backend is running"
+}
+```
+
+### 📞 Mais Ajuda
+- Execute: `./check-backend.sh`
+- Consulte: `RENDER_PAINEL_GUIA.md`

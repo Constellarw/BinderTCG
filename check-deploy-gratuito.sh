@@ -193,8 +193,15 @@ else
     echo ""
     echo -e "${BLUE}📚 DOCUMENTAÇÃO:${NC}"
     echo "- DEPLOY_GRATUITO.md"
+    echo "- RENDER_PAINEL_GUIA.md"
     echo "- SETUP_OAUTH.md"
     echo "- README.md"
+    echo ""
+    echo -e "${BLUE}🛠️  SCRIPTS ÚTEIS:${NC}"
+    echo "./check-backend.sh     # Diagnóstico completo do backend"
+    echo "./check-render.sh      # Checklist rápido do Render"
+    echo "./test-backend.sh      # Teste do backend em produção"
+    echo "./prepare-git.sh       # Preparar repositório para deploy"
 fi
 
 exit $ERRORS

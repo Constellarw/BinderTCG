@@ -131,3 +131,80 @@ https://seu-app-name.onrender.com
 - [ ] Anotei a URL do backend
 
 **🚀 Próximo passo: Deploy do frontend na Vercel!**
+
+---
+
+## 🚨 SOLUCIONANDO ERRO "Route not found"
+
+### ❌ Problema Comum
+Se você vir nos logs ou ao acessar a URL:
+```
+{"error":"Route not found"}
+```
+
+### 🔧 Configurações para Verificar
+
+**1. Root Directory (MUITO IMPORTANTE):**
+1. Vá na aba **"Settings"**
+2. Role até **"Build & Deploy"**
+3. Em **"Root Directory"** deve estar: `backend`
+4. Se estiver vazio ou diferente, clique **"Edit"**
+5. Digite: `backend`
+6. Clique **"Save Changes"**
+
+**2. Build Command:**
+- Deve estar: `npm install`
+
+**3. Start Command:**
+- Deve estar: `npm start`
+
+**4. Forçar Redeploy:**
+1. Vá na aba **"Manual Deploy"**
+2. Clique **"Deploy latest commit"**
+3. Aguarde 2-5 minutos
+
+### 🧪 Testando se Funcionou
+Acesse no navegador:
+```
+https://seu-app.onrender.com/health
+```
+
+**Deve retornar:**
+```json
+{
+  "status": "OK",
+  "message": "BinderTCG Backend is running",
+  "timestamp": "2024-...",
+  "env": "production",
+  "port": 10000
+}
+```
+
+### 🌐 Testando Rota Raiz
+Acesse:
+```
+https://seu-app.onrender.com/
+```
+
+**Deve retornar:**
+```json
+{
+  "message": "BinderTCG Backend API",
+  "version": "1.0.0",
+  "status": "running",
+  "endpoints": {
+    "health": "/health",
+    "auth": "/auth/*",
+    "decks": "/api/decks/*",
+    "gallery": "/api/gallery/*"
+  }
+}
+```
+
+### 📞 Script de Diagnóstico
+Execute no seu computador:
+```bash
+./check-backend.sh
+```
+
+Este script verifica configurações e testa o backend localmente.
