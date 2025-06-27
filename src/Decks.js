@@ -20,8 +20,8 @@ function Decks({ decks, onCreateDeck }) {
       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 24 }}>
         {decks.map(deck => (
           <Link
-            key={deck.id}
-            to={`/meus-decks/${deck.id}`}
+            key={deck._id || deck.id}
+            to={`/meus-decks/${deck._id || deck.id}`}
             style={{
               display: 'block',
               border: '1px solid #ccc',

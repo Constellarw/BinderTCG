@@ -39,7 +39,9 @@ function CardInspectorModal({ card, onClose, onAddToGallery, isInGallery, isAddi
                             >
                                 <option value="">Selecione um deck</option>
                                 {decks.map(deck => (
-                                    <option key={deck.id} value={deck.id}>{deck.name} ({deck.cards.length}/60)</option>
+                                    <option key={deck._id || deck.id} value={deck._id || deck.id}>
+                                        {deck.name} ({deck.cards ? deck.cards.length : 0}/60)
+                                    </option>
                                 ))}
                             </select>
                             <button
