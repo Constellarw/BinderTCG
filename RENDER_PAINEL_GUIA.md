@@ -81,7 +81,17 @@ Um formulário aparecerá:
    - Value: `sua-jwt-secret-super-segura-com-pelo-menos-32-caracteres`
    - Clique em **"Add Variable"**
 
-7. **Sétima variável (adicionar depois do deploy da Vercel):**
+7. **Sétima variável:**
+   - Key: `SESSION_SECRET`
+   - Value: `sua-session-secret-diferente-do-jwt`
+   - Clique em **"Add Variable"**
+
+8. **Oitava variável:**
+   - Key: `BACKEND_URL`
+   - Value: `https://bindertcg-backend.onrender.com` (substitua pela sua URL)
+   - Clique em **"Add Variable"**
+
+9. **Nona variável (adicionar depois do deploy da Vercel):**
    - Key: `FRONTEND_URL`
    - Value: `https://sua-app.vercel.app`
    - Clique em **"Add Variable"**

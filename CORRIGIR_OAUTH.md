@@ -1,95 +1,145 @@
-# Guia de Correção - Google OAuth "Acesso Bloqueado"
+# 🔐 CORRIGINDO PROBLEMAS DE OAUTH
 
-## Problema
-Erro: "Acesso bloqueado: a solicitação desse app é inválida"
+## ❌ Problema: "/auth/google" retorna "Not Found"
 
-## Configurações Atuais
-- **CLIENT_ID**: `679850352703-maqa0pbdvc6qqabf088aps0v7ksjep3l.apps.googleusercontent.com`
-- **Frontend**: `http://localhost:3001`
-- **Backend**: `http://localhost:5000`
-- **Callback URL**: `http://localhost:5000/auth/google/callback`
+### 🔍 Possíveis Causas
 
-## Passo a Passo para Corrigir
+1. **Variáveis de ambiente faltando**
+2. **callbackURL incorreta no Passport**
+3. **Rotas não carregadas corretamente**
+4. **Google OAuth mal configurado**
 
-### 1. Acesse o Google Cloud Console
-- Vá para: https://console.cloud.google.com/
-- Selecione seu projeto ou crie um novo
+---
 
-### 2. Navegue para APIs & Services > Credentials
-- No menu lateral: APIs & Services > Credentials
-- Encontre seu OAuth 2.0 Client ID: `679850352703-maqa0pbdvc6qqabf088aps0v7ksjep3l`
+## 🔧 SOLUÇÕES PASSO A PASSO
 
-### 3. Configure as Origens JavaScript Autorizadas
-Adicione estas URLs exatas:
+### 1. ✅ Verificar Variáveis de Ambiente no Render
+
+No painel do Render → Environment, confirme que tem TODAS estas variáveis:
+
 ```
-http://localhost:3001
-http://localhost:5000
-```
-
-### 4. Configure os URIs de Redirecionamento Autorizados
-Adicione esta URL exata:
-```
-http://localhost:5000/auth/google/callback
+NODE_ENV = production
+PORT = 10000
+BACKEND_URL = https://sua-app.onrender.com
+MONGODB_URI = mongodb+srv://...
+GOOGLE_CLIENT_ID = seu-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET = sua-secret
+JWT_SECRET = sua-jwt-secret
+SESSION_SECRET = sua-session-secret
+FRONTEND_URL = https://sua-app.vercel.app
 ```
 
-### 5. Configurar a Tela de Consentimento OAuth
-- Vá para: APIs & Services > OAuth consent screen
-- **User Type**: Escolha "External" (para desenvolvimento)
-- **Application name**: BinderTCG
-- **User support email**: Seu email
-- **Developer contact email**: Seu email
-- **Authorized domains**: Deixe vazio para localhost
+**⚠️ IMPORTANTE:** `BACKEND_URL` deve ser a URL do seu próprio backend no Render!
 
-### 6. Publicar a Aplicação (Importante!)
-- Na tela de consentimento OAuth
-- Clique em "PUBLISH APP" ou altere o status para "In production"
-- Isso é crucial para localhost funcionar
+### 2. 🧪 Testar Rotas de Autenticação
 
-### 7. Verificar Escopos
-Certifique-se que estes escopos estão habilitados:
-- `../auth/userinfo.email`
-- `../auth/userinfo.profile`
-
-### 8. Salvar e Aguardar
-- Salve todas as configurações
-- Aguarde 5-10 minutos para propagação
-
-## Testando
-Após as configurações, teste esta URL no navegador:
-```
-https://accounts.google.com/o/oauth2/v2/auth?client_id=679850352703-maqa0pbdvc6qqabf088aps0v7ksjep3l.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth%2Fgoogle%2Fcallback&response_type=code&scope=profile%20email
-```
-
-## Problemas Comuns
-
-### Se ainda não funcionar:
-1. **Verificar se o projeto está correto** - CLIENT_ID deve corresponder ao projeto
-2. **Limpar cache do navegador** - OAuth usa cache extensivo
-3. **Tentar navegador anônimo/incógnito**
-4. **Verificar se a Google API está habilitada**:
-   - APIs & Services > Library
-   - Procurar "Google+ API" ou "People API"
-   - Habilitar se necessário
-
-### Alternativa: Criar novo OAuth Client
-Se o problema persistir, crie um novo OAuth 2.0 Client ID:
-1. APIs & Services > Credentials
-2. Create Credentials > OAuth 2.0 Client ID
-3. Application type: Web application
-4. Name: BinderTCG-Local
-5. Authorized JavaScript origins: `http://localhost:3001`, `http://localhost:5000`
-6. Authorized redirect URIs: `http://localhost:5000/auth/google/callback`
-
-## Comandos para Testar Após Configuração
+Execute o script de teste:
 
 ```bash
-# 1. Parar os serviços
-cd /home/wislan/wis/BinderTCG
-# No terminal do frontend: Ctrl+C
-# No terminal do backend: Ctrl+C
+./test-auth.sh
+### 3. 🔄 Forçar Redeploy no Render
 
-# 2. Reiniciar backend
-cd backend
+1. Painel Render → **"Manual Deploy"**
+2. Clique **"Deploy latest commit"**
+3. Aguarde 2-5 minutos
+4. Verifique logs para erros
+
+### 4. 📜 Verificar Logs no Render
+
+1. Painel Render → **"Logs"**
+2. Procure por:
+   - `Loading routes...`
+   - `Auth routes loaded`
+   - Erros do Google Strategy
+   - Erros de variáveis de ambiente
+
+### 5. 🌐 Configurar Google Cloud Console
+
+1. Acesse [console.cloud.google.com](https://console.cloud.google.com)
+2. APIs & Services → Credentials
+3. Edite seu OAuth 2.0 Client ID
+4. Adicione as URLs:
+
+**Authorized JavaScript origins:**
+```
+https://sua-app.vercel.app
+```
+
+**Authorized redirect URIs:**
+```
+https://sua-app.onrender.com/auth/google/callback
+```
+
+---
+
+## 🔍 DIAGNÓSTICO AVANÇADO
+
+### Verificar se Passport está configurado
+
+No seu backend, acesse: `https://sua-app.onrender.com/auth/status`
+
+**Resposta esperada:**
+```json
+{
+  "message": "Auth routes working",
+  "routes": ["/auth/google", "/auth/google/callback", "/auth/logout", "/auth/me"],
+  "environment": "production",
+  "googleClientId": "configured"
+}
+```
+
+Se `googleClientId` estiver "missing", suas variáveis de ambiente não estão configuradas.
+
+### Verificar callbackURL
+
+A callbackURL no Passport deve mudar automaticamente entre:
+- **Desenvolvimento:** `http://localhost:5000/auth/google/callback`
+- **Produção:** `https://sua-app.onrender.com/auth/google/callback`
+
+---
+
+## 🚨 PROBLEMAS COMUNS
+
+### ❌ "GOOGLE_CLIENT_ID não encontrado"
+**Solução:** Adicionar variável no painel Render
+
+### ❌ "Error: redirect_uri_mismatch"
+**Solução:** Conferir URLs no Google Cloud Console
+
+### ❌ "Cannot GET /auth/google"
+**Solução:** Verificar se BACKEND_URL está configurado
+
+### ❌ "OAuth2Strategy requires a clientID"
+**Solução:** Verificar GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET
+
+---
+
+## ✅ TESTE FINAL
+
+Após corrigir tudo:
+
+1. Acesse: `https://sua-app.onrender.com/auth/google`
+2. Deve redirecionar para Google
+3. Após login, deve voltar para seu frontend
+
+---
+
+## 🛠️ SCRIPTS ÚTEIS
+
+```bash
+./test-auth.sh        # Teste específico de autenticação
+./test-backend.sh     # Teste geral do backend
+./check-backend.sh    # Diagnóstico completo
+```
+
+---
+
+## 📞 AINDA COM PROBLEMAS?
+
+1. Execute: `./test-auth.sh`
+2. Copie a saída e logs do Render
+3. Consulte `DEPLOY_GRATUITO.md`
+4. Verifique `RENDER_PAINEL_GUIA.md`
 npm run dev
 
 # 3. Reiniciar frontend (novo terminal)

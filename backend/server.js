@@ -94,9 +94,15 @@ app.get('/health', (req, res) => {
 });
 
 // Routes
+console.log('Loading routes...');
 app.use('/auth', require('./routes/auth'));
+console.log('Auth routes loaded');
+
 app.use('/api/decks', require('./routes/decks'));
+console.log('Decks routes loaded');
+
 app.use('/api/gallery', require('./routes/gallery'));
+console.log('Gallery routes loaded');
 
 // Error handling middleware
 app.use((err, req, res, next) => {

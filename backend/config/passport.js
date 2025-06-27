@@ -5,7 +5,9 @@ const User = require('../models/User');
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:5000/auth/google/callback"
+  callbackURL: process.env.NODE_ENV === 'production' 
+    ? `${process.env.BACKEND_URL || 'https://bindertcg-backend.onrender.com'}/auth/google/callback`
+    : "http://localhost:5000/auth/google/callback"
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     // Check if user already exists

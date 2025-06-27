@@ -3,6 +3,17 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
+// @route   GET /auth/status
+// @desc    Check auth routes status
+router.get('/status', (req, res) => {
+  res.json({
+    message: 'Auth routes working',
+    routes: ['/auth/google', '/auth/google/callback', '/auth/logout', '/auth/me'],
+    environment: process.env.NODE_ENV,
+    googleClientId: process.env.GOOGLE_CLIENT_ID ? 'configured' : 'missing'
+  });
+});
+
 // @route   GET /auth/google
 // @desc    Redirect to Google OAuth
 router.get('/google', passport.authenticate('google', {
