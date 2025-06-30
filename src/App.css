@@ -208,16 +208,15 @@ nav {
 }
 
 footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100vw;
+  position: relative;
+  width: 100%;
   background-color: #333;
   color: #fff;
   padding: 16px 0 12px 0;
   text-align: center;
   z-index: 1;
   font-size: 1em;
+  margin-top: 40px;
 }
 
 #loading-message {
